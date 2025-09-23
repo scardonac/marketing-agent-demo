@@ -1,0 +1,98 @@
+/* Simple CSS for Marketing Performance Agent */
+
+/* ========== BASIC STYLING ========== */
+.stApp {
+    background: #f8fafc;
+}
+
+.main-title {
+    text-align: center;
+    color: #1e293b;
+    margin-bottom: 2rem;
+}
+
+/* ========== CONTENT BOXES ========== */
+.stContainer > div:nth-child(1) > div:nth-child(1) {
+    background: #eff6ff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+    margin: 1rem 0;
+}
+
+.stContainer > div:nth-child(1) > div:nth-child(2) {
+    background: #f0fdf4;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #22c55e;
+    margin: 1rem 0;
+}
+
+/* ========== TABLE STYLING ========== */
+.stDataFrame {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.stDataFrame table {
+    font-size: 0.9rem;
+}
+
+.stDataFrame th {
+    background: #3b82f6 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    padding: 0.75rem !important;
+}
+
+.stDataFrame td {
+    padding: 0.5rem !important;
+    text-align: center !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.stDataFrame tr:hover {
+    background: #f8fafc !important;
+}
+
+.stDataFrame tr:nth-child(even) {
+    background: #ffffff !important;
+}
+
+.stDataFrame tr:nth-child(odd) {
+    background: #f9fafb !important;
+}
+
+/* ========== CHAT STYLING ========== */
+.stChatMessage {
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.stChatInput input {
+    border-radius: 8px !important;
+    border: 2px solid #e2e8f0 !important;
+}
+
+.stChatInput input:focus {
+    border-color: #3b82f6 !important;
+}
+
+/* ========== SIDEBAR STYLING ========== */
+.stSidebar {
+    background: #f1f5f9;
+}
+
+.stButton > button {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.stButton > button:hover {
+    transform: translateY(-1px);
+}

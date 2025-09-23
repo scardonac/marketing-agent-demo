@@ -1,0 +1,5 @@
+streamlit>=1.28.0
+boto3>=1.34.0
+requests>=2.31.0
+# pandas and numpy removed to avoid binary compatibility issues
+# Use app_simple.py which doesn't need pandas
