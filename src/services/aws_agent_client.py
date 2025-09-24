@@ -50,8 +50,8 @@ class BedrockAgentClient:
             
             # Configure client with timeout settings
             config = boto3.session.Config(
-                read_timeout=120,  # 2 minutes read timeout
-                connect_timeout=60,  # 1 minute connect timeout
+                read_timeout=300,  # 2 minutes read timeout
+                connect_timeout=90,  # 1 minute connect timeout
                 retries={
                     'max_attempts': 3,
                     'mode': 'adaptive'
