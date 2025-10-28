@@ -1,8 +1,6 @@
 import re
 import json
-# import pandas as pd
 from typing import Dict, List, Any, Optional, Union
-import streamlit as st
 
 def format_response(response_data: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -123,7 +121,8 @@ def extract_table_from_response(text: str) -> tuple[bool, Optional[Dict[str, Any
             }
     
     except Exception as e:
-        st.error(f"Error parsing table: {str(e)}")
+        # Silently handle parsing errors
+        pass
     
     return False, None
 
@@ -220,82 +219,3 @@ def validate_aws_credentials(access_key: str, secret_key: str, region: str) -> D
         result["warnings"].append(f"Region '{region}' is not in the common regions list")
     
     return result
-
-# def export_session_data(messages: List[Dict[str, Any]], response_data: Optional[Dict[str, Any]]) -> str:
-#     """
-#     Export session data for download.
-    
-#     Args:
-#         messages: Chat messages
-#         response_data: Current response data
-        
-#     Returns:
-#         JSON string of session data
-#     """
-#     export_data = {
-#         "export_timestamp": pd.Timestamp.now().isoformat(),
-#         "messages": messages,
-#         "current_response": response_data,
-#         "total_messages": len(messages),
-#         "version": "1.0"
-#     }
-    
-#     return json.dumps(export_data, indent=2, default=str)
-
-# def create_summary_statistics(df: pd.DataFrame) -> Dict[str, Any]:
-#     """
-#     Create summary statistics for a DataFrame.
-    
-#     Args:
-#         df: Pandas DataFrame
-        
-#     Returns:
-#         Dictionary with summary statistics
-#     """
-#     stats = {
-#         "total_rows": len(df),
-#         "total_columns": len(df.columns),
-#         "numeric_columns": len(df.select_dtypes(include=['number']).columns),
-#         "categorical_columns": len(df.select_dtypes(include=['object']).columns),
-#         "missing_values": df.isnull().sum().sum(),
-#     }
-    
-#     # Add column-specific stats for numeric columns only
-#     numeric_cols = df.select_dtypes(include=['number']).columns
-#     if len(numeric_cols) > 0:
-#         stats["numeric_summary"] = df[numeric_cols].describe().to_dict()
-    
-#     return stats
-
-# def clean_table_data(df: pd.DataFrame) -> pd.DataFrame:
-#     """
-#     Clean and format table data for better display.
-    
-#     Args:
-#         df: Raw DataFrame
-        
-#     Returns:
-#         Cleaned DataFrame
-#     """
-#     # Make a copy to avoid modifying the original
-#     cleaned_df = df.copy()
-    
-#     # Clean up numeric columns
-#     for col in cleaned_df.columns:
-#         # Try to convert to numeric if it looks like numbers
-#         if cleaned_df[col].dtype == 'object':
-#             # Check if this column contains mostly numbers
-#             numeric_values = pd.to_numeric(cleaned_df[col], errors='coerce')
-#             if not numeric_values.isna().all() and numeric_values.notna().sum() > len(cleaned_df) * 0.7:
-#                 cleaned_df[col] = numeric_values
-    
-#     # Format numeric columns for better display
-#     for col in cleaned_df.select_dtypes(include=['number']).columns:
-#         if cleaned_df[col].dtype in ['float64', 'float32']:
-#             # Round floats to reasonable precision
-#             if cleaned_df[col].max() > 1000:
-#                 cleaned_df[col] = cleaned_df[col].round(2)
-#             else:
-#                 cleaned_df[col] = cleaned_df[col].round(4)
-    
-#     return cleaned_df
