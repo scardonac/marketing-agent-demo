@@ -241,21 +241,21 @@ def main():
     with st.sidebar:
         st.header("")
         
-        # Configuration Status
-        with st.expander("⚙️ Configuration Status", expanded=True):
-            config_source = get_config_source()
-            if config_source == "streamlit_secrets":
-                st.success("✅ Using Streamlit Secrets")
-                st.markdown("Configuration is loaded from Streamlit Cloud secrets.")
-            elif config_source == "config_file":
-                st.info("📄 Using config.py file")
-                st.markdown("Consider moving to Streamlit secrets for better security.")
-            elif config_source == "environment":
-                st.info("🌍 Using environment variables")
-                st.markdown("Consider moving to Streamlit secrets for Streamlit Cloud deployment.")
-            else:
-                st.warning("⚠️ No configuration found")
-                st.markdown("Please configure AWS credentials in Streamlit secrets.")
+        # # Configuration Status
+        # with st.expander("⚙️ Configuration Status", expanded=True):
+        #     config_source = get_config_source()
+        #     if config_source == "streamlit_secrets":
+        #         st.success("✅ Using Streamlit Secrets")
+        #         st.markdown("Configuration is loaded from Streamlit Cloud secrets.")
+        #     elif config_source == "config_file":
+        #         st.info("📄 Using config.py file")
+        #         st.markdown("Consider moving to Streamlit secrets for better security.")
+        #     elif config_source == "environment":
+        #         st.info("🌍 Using environment variables")
+        #         st.markdown("Consider moving to Streamlit secrets for Streamlit Cloud deployment.")
+        #     else:
+        #         st.warning("⚠️ No configuration found")
+        #         st.markdown("Please configure AWS credentials in Streamlit secrets.")
             
             # Show how to configure Streamlit secrets
             if config_source in ["config_file", "environment", "none"]:
