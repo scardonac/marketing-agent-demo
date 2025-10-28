@@ -241,48 +241,48 @@ def main():
     with st.sidebar:
         st.header("")
         
-        # # Configuration Status
-        # with st.expander("⚙️ Configuration Status", expanded=True):
-        #     config_source = get_config_source()
-        #     if config_source == "streamlit_secrets":
-        #         st.success("✅ Using Streamlit Secrets")
-        #         st.markdown("Configuration is loaded from Streamlit Cloud secrets.")
-        #     elif config_source == "config_file":
-        #         st.info("📄 Using config.py file")
-        #         st.markdown("Consider moving to Streamlit secrets for better security.")
-        #     elif config_source == "environment":
-        #         st.info("🌍 Using environment variables")
-        #         st.markdown("Consider moving to Streamlit secrets for Streamlit Cloud deployment.")
-        #     else:
-        #         st.warning("⚠️ No configuration found")
-        #         st.markdown("Please configure AWS credentials in Streamlit secrets.")
+        # Configuration Status
+        with st.expander("⚙️ Configuration Status", expanded=True):
+            config_source = get_config_source()
+            if config_source == "streamlit_secrets":
+                st.success("✅ Using Streamlit Secrets")
+                st.markdown("Configuration is loaded from Streamlit Cloud secrets.")
+            elif config_source == "config_file":
+                st.info("📄 Using config.py file")
+                st.markdown("Consider moving to Streamlit secrets for better security.")
+            elif config_source == "environment":
+                st.info("🌍 Using environment variables")
+                st.markdown("Consider moving to Streamlit secrets for Streamlit Cloud deployment.")
+            else:
+                st.warning("⚠️ No configuration found")
+                st.markdown("Please configure AWS credentials in Streamlit secrets.")
             
-        # Show how to configure Streamlit secrets
-        if config_source in ["config_file", "environment", "none"]:
-            with st.expander("🔧 How to use Streamlit Secrets", expanded=False):
-                st.markdown("""
-                **For Streamlit Cloud deployment:**
-                
-                1. Go to your Streamlit Cloud app settings
-                2. Click on "Secrets" in the left sidebar
-                3. Add the following secrets:
-                
-                ```toml
-                BEDROCK_AGENT_ID = "your-agent-id"
-                BEDROCK_AGENT_ALIAS_ID = "TSTALIASID"
-                AWS_REGION = "us-east-1"
-                AWS_ACCESS_KEY_ID = "your-access-key"
-                AWS_SECRET_ACCESS_KEY = "your-secret-key"
-                # OR use AWS_PROFILE instead of keys
-                AWS_PROFILE = "your-profile-name"
-                ```
-                
-                **For local development:**
-                
-                Create a `.streamlit/secrets.toml` file in your project root with the same content.
-                
-                **Note:** Streamlit secrets take priority over config.py and environment variables.
-                """)
+            # Show how to configure Streamlit secrets
+            if config_source in ["config_file", "environment", "none"]:
+                with st.expander("🔧 How to use Streamlit Secrets", expanded=False):
+                    st.markdown("""
+                    **For Streamlit Cloud deployment:**
+                    
+                    1. Go to your Streamlit Cloud app settings
+                    2. Click on "Secrets" in the left sidebar
+                    3. Add the following secrets:
+                    
+                    ```toml
+                    BEDROCK_AGENT_ID = "your-agent-id"
+                    BEDROCK_AGENT_ALIAS_ID = "TSTALIASID"
+                    AWS_REGION = "us-east-1"
+                    AWS_ACCESS_KEY_ID = "your-access-key"
+                    AWS_SECRET_ACCESS_KEY = "your-secret-key"
+                    # OR use AWS_PROFILE instead of keys
+                    AWS_PROFILE = "your-profile-name"
+                    ```
+                    
+                    **For local development:**
+                    
+                    Create a `.streamlit/secrets.toml` file in your project root with the same content.
+                    
+                    **Note:** Streamlit secrets take priority over config.py and environment variables.
+                    """)
         
         # Example Questions
         with st.expander("📋 Example Questions", expanded=True):
