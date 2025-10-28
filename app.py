@@ -12,23 +12,75 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from src.services.aws_agent_client import BedrockAgentClient
 from src.utils.helpers import format_response
 
-# Try to load configuration from config.py
-try:
-    import config
-    DEFAULT_AGENT_ID = getattr(config, 'BEDROCK_AGENT_ID', '')
-    DEFAULT_AGENT_ALIAS_ID = getattr(config, 'BEDROCK_AGENT_ALIAS_ID', 'TSTALIASID')
-    DEFAULT_REGION = getattr(config, 'AWS_REGION', 'us-east-1')
-    DEFAULT_ACCESS_KEY = getattr(config, 'AWS_ACCESS_KEY_ID', '')
-    DEFAULT_SECRET_KEY = getattr(config, 'AWS_SECRET_ACCESS_KEY', '')
-    DEFAULT_PROFILE = getattr(config, 'AWS_PROFILE', '')
-except ImportError:
-    # No config file found, try environment variables
-    DEFAULT_AGENT_ID = os.getenv('BEDROCK_AGENT_ID', '')
-    DEFAULT_AGENT_ALIAS_ID = os.getenv('BEDROCK_AGENT_ALIAS_ID', 'TSTALIASID')
-    DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
-    DEFAULT_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID', '')
-    DEFAULT_SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
-    DEFAULT_PROFILE = os.getenv('AWS_PROFILE', '')
+# Load configuration from Streamlit secrets, config.py, or environment variables (in priority order)
+def load_configuration():
+    """Load configuration from Streamlit secrets, config file, or environment variables."""
+    # First priority: Streamlit secrets
+    if hasattr(st, 'secrets') and st.secrets:
+        try:
+            return {
+                'AGENT_ID': st.secrets.get('BEDROCK_AGENT_ID', ''),
+                'AGENT_ALIAS_ID': st.secrets.get('BEDROCK_AGENT_ALIAS_ID', 'TSTALIASID'),
+                'REGION': st.secrets.get('AWS_REGION', 'us-east-1'),
+                'ACCESS_KEY': st.secrets.get('AWS_ACCESS_KEY_ID', ''),
+                'SECRET_KEY': st.secrets.get('AWS_SECRET_ACCESS_KEY', ''),
+                'PROFILE': st.secrets.get('AWS_PROFILE', '')
+            }
+        except Exception as e:
+            st.warning(f"Could not load Streamlit secrets: {str(e)}")
+    
+    # Second priority: config.py file
+    try:
+        import config
+        return {
+            'AGENT_ID': getattr(config, 'BEDROCK_AGENT_ID', ''),
+            'AGENT_ALIAS_ID': getattr(config, 'BEDROCK_AGENT_ALIAS_ID', 'TSTALIASID'),
+            'REGION': getattr(config, 'AWS_REGION', 'us-east-1'),
+            'ACCESS_KEY': getattr(config, 'AWS_ACCESS_KEY_ID', ''),
+            'SECRET_KEY': getattr(config, 'AWS_SECRET_ACCESS_KEY', ''),
+            'PROFILE': getattr(config, 'AWS_PROFILE', '')
+        }
+    except ImportError:
+        pass
+    
+    # Third priority: environment variables
+    return {
+        'AGENT_ID': os.getenv('BEDROCK_AGENT_ID', ''),
+        'AGENT_ALIAS_ID': os.getenv('BEDROCK_AGENT_ALIAS_ID', 'TSTALIASID'),
+        'REGION': os.getenv('AWS_DEFAULT_REGION', 'us-east-1'),
+        'ACCESS_KEY': os.getenv('AWS_ACCESS_KEY_ID', ''),
+        'SECRET_KEY': os.getenv('AWS_SECRET_ACCESS_KEY', ''),
+        'PROFILE': os.getenv('AWS_PROFILE', '')
+    }
+
+# Load configuration
+config_data = load_configuration()
+DEFAULT_AGENT_ID = config_data['AGENT_ID']
+DEFAULT_AGENT_ALIAS_ID = config_data['AGENT_ALIAS_ID']
+DEFAULT_REGION = config_data['REGION']
+DEFAULT_ACCESS_KEY = config_data['ACCESS_KEY']
+DEFAULT_SECRET_KEY = config_data['SECRET_KEY']
+DEFAULT_PROFILE = config_data['PROFILE']
+
+def get_config_source():
+    """Determine which configuration source is being used."""
+    # Check Streamlit secrets first
+    if hasattr(st, 'secrets') and st.secrets and st.secrets.get('BEDROCK_AGENT_ID'):
+        return "streamlit_secrets"
+    
+    # Check config.py file
+    try:
+        import config
+        if hasattr(config, 'BEDROCK_AGENT_ID') and config.BEDROCK_AGENT_ID:
+            return "config_file"
+    except ImportError:
+        pass
+    
+    # Check environment variables
+    if os.getenv('BEDROCK_AGENT_ID'):
+        return "environment"
+    
+    return "none"
 
 # Automatically use environment variables if available
 AUTO_INITIALIZE = bool(DEFAULT_AGENT_ID and DEFAULT_AGENT_ALIAS_ID and 
@@ -160,7 +212,7 @@ def extract_sql_query_from_trace(trace_data):
 def main():
     """Main application function."""
     
-    # Auto-initialize if environment variables are available
+    # Auto-initialize if configuration is available
     if AUTO_INITIALIZE and not st.session_state.agent_client:
         st.session_state.agent_id = DEFAULT_AGENT_ID
         st.session_state.agent_alias_id = DEFAULT_AGENT_ALIAS_ID
@@ -169,6 +221,15 @@ def main():
         st.session_state.aws_secret_access_key = DEFAULT_SECRET_KEY
         st.session_state.aws_profile = DEFAULT_PROFILE
         initialize_agent_client()
+        
+        # Show configuration source information
+        config_source = get_config_source()
+        if config_source == "streamlit_secrets":
+            st.success("✅ Configuration loaded from Streamlit secrets")
+        elif config_source == "config_file":
+            st.info("ℹ️ Configuration loaded from config.py file")
+        elif config_source == "environment":
+            st.info("ℹ️ Configuration loaded from environment variables")
     
     # Title and description with better typography
     st.markdown('<div class="text-center">', unsafe_allow_html=True)
@@ -179,6 +240,49 @@ def main():
     # Sidebar for configuration
     with st.sidebar:
         st.header("")
+        
+        # Configuration Status
+        with st.expander("⚙️ Configuration Status", expanded=True):
+            config_source = get_config_source()
+            if config_source == "streamlit_secrets":
+                st.success("✅ Using Streamlit Secrets")
+                st.markdown("Configuration is loaded from Streamlit Cloud secrets.")
+            elif config_source == "config_file":
+                st.info("📄 Using config.py file")
+                st.markdown("Consider moving to Streamlit secrets for better security.")
+            elif config_source == "environment":
+                st.info("🌍 Using environment variables")
+                st.markdown("Consider moving to Streamlit secrets for Streamlit Cloud deployment.")
+            else:
+                st.warning("⚠️ No configuration found")
+                st.markdown("Please configure AWS credentials in Streamlit secrets.")
+            
+            # Show how to configure Streamlit secrets
+            if config_source in ["config_file", "environment", "none"]:
+                with st.expander("🔧 How to use Streamlit Secrets", expanded=False):
+                    st.markdown("""
+                    **For Streamlit Cloud deployment:**
+                    
+                    1. Go to your Streamlit Cloud app settings
+                    2. Click on "Secrets" in the left sidebar
+                    3. Add the following secrets:
+                    
+                    ```toml
+                    BEDROCK_AGENT_ID = "your-agent-id"
+                    BEDROCK_AGENT_ALIAS_ID = "TSTALIASID"
+                    AWS_REGION = "us-east-1"
+                    AWS_ACCESS_KEY_ID = "your-access-key"
+                    AWS_SECRET_ACCESS_KEY = "your-secret-key"
+                    # OR use AWS_PROFILE instead of keys
+                    AWS_PROFILE = "your-profile-name"
+                    ```
+                    
+                    **For local development:**
+                    
+                    Create a `.streamlit/secrets.toml` file in your project root with the same content.
+                    
+                    **Note:** Streamlit secrets take priority over config.py and environment variables.
+                    """)
         
         # Example Questions
         with st.expander("📋 Example Questions", expanded=True):
