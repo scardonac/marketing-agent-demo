@@ -42,9 +42,30 @@ pip install -r requirements.txt
 
 ### 2. Configure AWS Credentials and Agent Information
 
-The application supports **automatic initialization** if you provide credentials via configuration files or environment variables. You have **four options**:
+The application now supports **automatic initialization** with **Streamlit secrets** as the preferred method. You have **five options**:
 
-#### Option A: Environment Variables (Recommended for Auto-Start)
+#### Option A: Streamlit Secrets (Recommended for Production)
+**For Streamlit Cloud deployment:**
+1. Go to your Streamlit Cloud app settings
+2. Click "Secrets" in the sidebar
+3. Add your configuration in TOML format:
+   ```toml
+   BEDROCK_AGENT_ID = "your-agent-id"
+   BEDROCK_AGENT_ALIAS_ID = "TSTALIASID"
+   AWS_REGION = "us-east-1"
+   AWS_ACCESS_KEY_ID = "your-access-key"
+   AWS_SECRET_ACCESS_KEY = "your-secret-key"
+   ```
+
+**For local development:**
+1. Create `.streamlit/secrets.toml` in your project root
+2. Add the same configuration as above
+
+**✨ With Streamlit secrets configured, the agent will connect automatically and securely!**
+
+See [STREAMLIT_SECRETS_SETUP.md](STREAMLIT_SECRETS_SETUP.md) for detailed instructions.
+
+#### Option B: Environment Variables
 1. Copy the environment template:
    ```bash
    copy .env.template .env
@@ -61,14 +82,14 @@ The application supports **automatic initialization** if you provide credentials
 
 **✨ With environment variables set, the agent will connect automatically when you start the app!**
 
-#### Option B: Interactive Setup
+#### Option C: Interactive Setup
 Run the setup script to create a configuration file:
 ```bash
 python setup.py
 ```
 This will create a `config.py` file with your settings.
 
-#### Option C: Manual Configuration File
+#### Option D: Manual Configuration File
 1. Copy `config_template.py` to `config.py`:
    ```bash
    copy config_template.py config.py
@@ -83,8 +104,8 @@ This will create a `config.py` file with your settings.
    BEDROCK_AGENT_ALIAS_ID = "TSTALIASID"
    ```
 
-#### Option D: Manual Entry in Web Interface
-If you don't set up a config file or environment variables, you can enter your credentials directly in the sidebar of the web application.
+#### Option E: Manual Entry in Web Interface
+If you don't set up secrets, a config file, or environment variables, you can enter your credentials directly in the sidebar of the web application.
 
 ### 3. Run the Application
 ```bash
