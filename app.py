@@ -329,21 +329,7 @@ def main():
 
 • Days to engage, days to sale
             """)
-        
-#         # System Status
-#         with st.expander("⚙️ System Status", expanded=False):
-#             st.markdown("""
-# **Timeout Protection:**
-# ✅ Extended timeouts (2 minutes)
-# ✅ Automatic retry logic
-# ✅ Connection error handling
 
-# **Performance Tips:**
-# • Break complex questions into parts
-# • Use specific time periods
-# • Try simpler wording if timeouts occur
-#             """)
-        
         # Session Info for debugging
         with st.expander("🔧 Debug Info", expanded=False):
             st.markdown(f"**Session ID:** `{st.session_state.session_id[:16]}...`")
@@ -357,10 +343,6 @@ def main():
     # Enhanced question input area
     st.markdown("---")
     st.markdown("### 💬 Ask Your Marketing Questions")
-    
-    # Session context info
-    # if st.session_state.messages:
-    #     st.info("💡 **Conversation Context**: I remember our previous discussion! You can ask follow-up questions like 'show me the SQL query' or 'what about last month?' and I'll understand the context.")
     
     # Create columns for better layout
     col1, col2 = st.columns([5, 1])
@@ -589,69 +571,13 @@ def main():
                             if pair["answer"].get("timestamp"):
                                 timestamp = time.strftime("%H:%M:%S", time.localtime(pair["answer"]["timestamp"]))
                                 st.caption(f"🕐 Answered at {timestamp}")
-                        # with answer_col2:
-                        #     if pair["answer"].get("has_table"):
-                        #         st.caption("📊 Includes data table")
                         
                         # Main answer content
                         st.markdown("**Answer:**")
                         st.markdown(pair["answer"]["content"])
                         
                         # # Enhanced table display if available
-                        # if pair["answer"].get("has_table") and pair["answer"].get("table_data"):
-                        #     table_data = pair["answer"]["table_data"]
-                        #     if table_data.get("headers") and table_data.get("rows"):
-                        #         # Create a clean DataFrame for display
-                        #         headers = table_data["headers"]
-                        #         rows = table_data["rows"][1:]  # Skip header row since we already have headers
-                                
-                        #         if rows:
-                        #             df = pd.DataFrame(rows, columns=headers)
-                                    
-                        #             # Clean the data for better display
-                        #             cleaned_df = clean_table_data(df)
-                                    
-                        #             # Enhanced table display with container
-                        #             st.markdown('<div class="data-table-container">', unsafe_allow_html=True)
-                        #             st.markdown("#### 📊 Data Results")
-                                    
-                        #             # Table description
-                        #             st.info(f"📋 Found {len(cleaned_df)} rows and {len(cleaned_df.columns)} columns of data")
-                                    
-                        #             # Display the table with enhanced formatting
-                        #             st.dataframe(
-                        #                 cleaned_df, 
-                        #                 use_container_width=True,
-                        #                 hide_index=True,
-                        #                 height=min(600, max(250, (len(cleaned_df) + 1) * 45 + 80))  # Better dynamic height
-                        #             )
-                                    
-                        #             # Enhanced summary metrics
-                        #             st.markdown("#### 📈 Quick Stats")
-                        #             metric_cols = st.columns(4)
-                        #             with metric_cols[0]:
-                        #                 st.metric("📝 Total Rows", f"{len(cleaned_df):,}")
-                        #             with metric_cols[1]:
-                        #                 st.metric("📊 Columns", len(cleaned_df.columns))
-                        #             with metric_cols[2]:
-                        #                 numeric_cols = len(cleaned_df.select_dtypes(include=['number']).columns)
-                        #                 st.metric("🔢 Numeric Fields", numeric_cols)
-                        #             with metric_cols[3]:
-                        #                 text_cols = len(cleaned_df.select_dtypes(include=['object']).columns)
-                        #                 st.metric("📝 Text Fields", text_cols)
-                                    
-                        #             # Data export option
-                        #             if st.button("💾 Download Data as CSV", key=f"download_{pair_index}"):
-                        #                 csv = cleaned_df.to_csv(index=False)
-                        #                 st.download_button(
-                        #                     label="📥 Click to Download",
-                        #                     data=csv,
-                        #                     file_name=f"marketing_data_{int(time.time())}.csv",
-                        #                     mime="text/csv",
-                        #                     key=f"download_btn_{pair_index}"
-                        #                 )
-                                    
-                        #             st.markdown('</div>', unsafe_allow_html=True)
+
                         
                         # Enhanced SQL Query Display Section
                         if pair["answer"].get("raw_response") and pair["answer"]["raw_response"].get("raw_response", {}).get("trace_data"):

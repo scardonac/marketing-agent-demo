@@ -38,6 +38,31 @@ def format_response(response_data: Dict[str, Any]) -> Dict[str, Any]:
     
     return formatted_response
 
+def format_image_urls(text: str) -> str:
+    """
+    Detect image URLs in text and convert them to markdown image syntax.
+    
+    Args:
+        text: Input text
+        
+    Returns:
+        Text with formatted image links
+    """
+    # Regex to find URLs that end with image extensions
+    # This regex looks for http/https URLs that end with common image extensions
+    # and are NOT already part of a markdown image syntax ![...](...)
+    
+    # Pattern matches http/https URLs that contain an image extension
+    # and are NOT already part of a markdown image syntax
+    # We use a non-greedy match for the domain/path part to ensure we stop at the extension
+    url_pattern = r'(?<!\()https?://[^\s\)]+?\.(?:png|jpg|jpeg|gif|webp)(?:[?#][^\s\)]*)?(?!\))'
+    
+    def replace_with_image(match):
+        url = match.group(0)
+        return f"\n![Image]({url})\n"
+    
+    return re.sub(url_pattern, replace_with_image, text, flags=re.IGNORECASE)
+
 def clean_response_text(text: str) -> str:
     """
     Clean and format response text for better display.
@@ -50,6 +75,9 @@ def clean_response_text(text: str) -> str:
     """
     if not text:
         return "No response received."
+    
+    # Format image URLs
+    text = format_image_urls(text)
     
     # Remove excessive whitespace
     text = re.sub(r'\n\s*\n\s*\n', '\n\n', text)
