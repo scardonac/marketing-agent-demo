@@ -1,6 +1,7 @@
 import boto3
 import json
 import time
+from datetime import datetime
 from typing import Dict, Any, Optional
 import streamlit as st
 
@@ -104,6 +105,10 @@ class BedrockAgentClient:
         if not session_id:
             session_id = f"streamlit-demo-{int(time.time())}"
         
+        # Add current date context to the message
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        enhanced_message = f"Current Date: {current_date}\n\n{message}"
+        
         last_error = None
         
         for attempt in range(max_retries + 1):
@@ -113,7 +118,7 @@ class BedrockAgentClient:
                     agentId=self.agent_id,
                     agentAliasId=self.agent_alias_id,
                     sessionId=session_id,
-                    inputText=message
+                    inputText=enhanced_message
                 )
                 
                 # Process the streaming response
